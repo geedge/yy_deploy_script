@@ -18,6 +18,7 @@ import tqdm
 from concurrent.futures import ThreadPoolExecutor
 import threading
 from dns.message import make_query
+from logger_DoE import *
 
 def ge_cookie():
     cookie = ""
@@ -111,7 +112,7 @@ if __name__ == '__main__':
         start_time = time.perf_counter()
         # while time.perf_counter() - start_time < 0.1:
         #     pass
-    print('all waiting')
+    #print('all waiting')
     while time.perf_counter() - stime < wait_time:
         pass
     # 触发事件，同时释放所有线程
@@ -119,7 +120,7 @@ if __name__ == '__main__':
     # 等待所有线程完成
     for t in threads:
         t.join()
-    print('ATT over:',time.time() - s_time)
+    #print('ATT over:',time.time() - s_time)
     #for i in tqdm.tqdm(range(1000)):
     #send_request("151.101.76.204",0,0,0)
 
