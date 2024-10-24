@@ -5,7 +5,7 @@ import random
 import string
 import time
 
-import dns
+import dns.message
 
 from logger_DoE import *
 
@@ -31,7 +31,7 @@ logger = InfoLogger(interval=1)
 logger.log_info(LogLevel.INFO, "程序开始运行")
 for i in range(int(args.n)):
     #print(f"python3 cve44487.py -s {i}")
-    os.popen(f"python att_pending_https.py -stime {stime} -round {round} -wait {wait_time}")
+    os.popen(f"python3 att_pending_cookie.py -stime {stime} -round {round} -wait {wait_time}")
 
 message = dns.message.make_query(''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))+ ".google.com", "A")
 message.flags |= dns.flags.RD

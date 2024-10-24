@@ -10,7 +10,6 @@ import sys
 import time
 import requests
 import dns.message
-import httpx
 import gzip
 import io
 import pandas as pd
@@ -18,7 +17,6 @@ import tqdm
 from concurrent.futures import ThreadPoolExecutor
 import threading
 from dns.message import make_query
-from logger_DoE import *
 
 def ge_cookie():
     cookie = ""
@@ -47,7 +45,7 @@ def send_request(event,url,t,latency,stime):
     body = ','.join([f'{name}: {value}' for name, value in headers.items()])
     request_line = "GET /dns-query?dns=" + f"{dns_req} HTTP/1.1\r\n"
     conn.send(request_line.encode())
-    headers0 = {'host': 'www.doeresearch.site'}
+    headers0 = {'host': 'doegj.lushlife.space'}
     headers0 = ''.join([f'{name}: {value}\r\n' for name, value in headers0.items()])
     conn.send(headers0.encode())
 
@@ -92,7 +90,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
-    path = '/root/Nora/cdn/'
+    path = ''
     #path = 'D:\Volumes\调研\项目\YYDNS\GJ\DDOS/'
     df = pd.read_csv(path+'fastly_att.csv',nrows=64)
     data = df.set_index('ip')['latency'].to_dict()
@@ -112,7 +110,7 @@ if __name__ == '__main__':
         start_time = time.perf_counter()
         # while time.perf_counter() - start_time < 0.1:
         #     pass
-    #print('all waiting')
+    print('all waiting')
     while time.perf_counter() - stime < wait_time:
         pass
     # 触发事件，同时释放所有线程
@@ -120,7 +118,7 @@ if __name__ == '__main__':
     # 等待所有线程完成
     for t in threads:
         t.join()
-    #print('ATT over:',time.time() - s_time)
+    print('ATT over:',time.time() - s_time)
     #for i in tqdm.tqdm(range(1000)):
     #send_request("151.101.76.204",0,0,0)
 
