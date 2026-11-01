@@ -1,6 +1,6 @@
 module fakedns6
 
-go 1.20
+go 1.25.0
 
 require (
 	github.com/google/gopacket v1.1.19
@@ -9,7 +9,7 @@ require (
 
 require (
 	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/net v0.17.0 // indirect
-	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect
 )
